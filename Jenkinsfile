@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -6,7 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
+        stage('Clone') {
             steps {
                 git branch: 'main', url: 'https://github.com/FaeizHamdard22/Dev.git'
             }
@@ -14,19 +15,21 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}")
-                }
+                sh "docker build -t $IMAGE_NAME ."
             }
         }
 
-        stage('Login to DockerHub and Push') {
+        stage('Push to DockerHub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
-                    script {
-                        sh "echo $DOCKER_HUB_PASS | docker login -u $DOCKER_HUB_USER --password-stdin"
-                        sh "docker push ${IMAGE_NAME}"
-                    }
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_HUB_USER',
+                    passwordVariable: 'DOCKER_HUB_PASS'
+                )]) {
+                    sh '''
+                        echo $DOCKER_HUB_PASS | docker login -u $DOCKER_HUB_USER --password-stdin
+                        docker push $IMAGE_NAME
+                    '''
                 }
             }
         }
