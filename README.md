@@ -1,53 +1,28 @@
+حتماً داداش. اینم فقط محتوای دقیق فایل `README.md` ـت، تمیز و حرفه‌ای، با رعایت جداسازی توضیحات و کدها به شکل درست:
+
+---
+
+````md
 # Flask Hello World – Full DevOps Pipeline 🚀
 
 This project demonstrates a complete DevOps pipeline using:
 
-- **Flask** (Python web app)
-- **GitHub** (Code version control)
-- **Docker** (Containerization)
-- **Jenkins** (CI/CD automation)
-- **DockerHub** (Image repository)
-- **Terraform** (Infrastructure as Code)
-- **Ansible** (Configuration management)
-- **AWS EC2** (Cloud hosting)
+- Flask (Python web app)
+- GitHub (Code version control)
+- Docker (Containerization)
+- Jenkins (CI/CD automation)
+- DockerHub (Image registry)
+- Terraform (Infrastructure as Code)
+- Ansible (Configuration management)
+- AWS EC2 (Cloud hosting)
 
 ---
 
-## 📌 Objective
+## 🐍 Flask Application
 
-Fully automate the process of:
+Simple Flask app to return a hello message.
 
-1. Writing code for a simple Flask app
-2. Pushing it to GitHub
-3. Jenkins automatically builds the Docker image
-4. Pushes it to DockerHub
-5. Terraform provisions an EC2 instance
-6. Ansible installs dependencies and runs the app in Docker
-
----
-
-## 📁 Project Structure
-
-flask-helloworld-Devops/
-│
-├── app.py # Flask application
-├── requirements.txt # Python dependencies
-├── Dockerfile # Instructions to build Docker image
-├── Jenkinsfile # Jenkins pipeline
-├── inventory.ini # Ansible inventory (EC2 IP)
-├── playbook.yml # Ansible tasks
-├── main.tf # Terraform file to create EC2
-└── README.md # This file
-
-python
-Copy
-Edit
-
----
-
-## 🐍 1. Flask App
-
-**app.py**
+**`app.py`**
 ```python
 from flask import Flask
 app = Flask(__name__)
@@ -58,16 +33,23 @@ def hello():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
-requirements.txt
+````
 
-nginx
-Copy
-Edit
+**`requirements.txt`**
+
+```
 flask
-🐳 2. Dockerfile
-dockerfile
-Copy
-Edit
+```
+
+---
+
+## 🐳 Docker
+
+Dockerfile to build the Flask app image.
+
+**`Dockerfile`**
+
+```dockerfile
 FROM python:3.10-slim
 
 WORKDIR /app
@@ -78,12 +60,17 @@ RUN pip install -r requirements.txt
 COPY . .
 
 CMD ["python", "app.py"]
-⚙️ 3. Jenkins CI/CD
-Jenkinsfile
+```
 
-groovy
-Copy
-Edit
+---
+
+## ⚙️ Jenkins CI/CD Pipeline
+
+Jenkins pulls the code, builds Docker image, and pushes it to DockerHub.
+
+**`Jenkinsfile`**
+
+```groovy
 pipeline {
     agent any
 
@@ -112,14 +99,17 @@ pipeline {
         }
     }
 }
-💡 DockerHub credentials (dockerhub-pass) must be added in Jenkins > Manage Credentials
+```
 
-☁️ 4. Terraform – Provision EC2
-main.tf
+---
 
-hcl
-Copy
-Edit
+## ☁️ Provision EC2 with Terraform
+
+Terraform provisions an Ubuntu EC2 instance.
+
+**`main.tf`**
+
+```hcl
 provider "aws" {
   region     = "us-east-1"
   access_key = "<YOUR_ACCESS_KEY>"
@@ -127,34 +117,33 @@ provider "aws" {
 }
 
 resource "aws_instance" "web" {
-  ami                    = "ami-0c7217cdde317cfec"  # Ubuntu 22.04
-  instance_type          = "t2.micro"
-  key_name               = "mykey"
+  ami                         = "ami-0c7217cdde317cfec"
+  instance_type               = "t2.micro"
+  key_name                    = "mykey"
   associate_public_ip_address = true
 
   tags = {
     Name = "FlaskAppServer"
   }
 }
-Run Terraform
-bash
-Copy
-Edit
-terraform init
-terraform apply
-⚙️ 5. Ansible – Install & Deploy on EC2
-inventory.ini
+```
 
-ini
-Copy
-Edit
+---
+
+## 🛠️ Configure EC2 with Ansible
+
+Ansible installs Docker, pulls image, and runs the container.
+
+**`inventory.ini`**
+
+```ini
 [web]
 <EC2_PUBLIC_IP> ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mykey.pem
-playbook.yml
+```
 
-yaml
-Copy
-Edit
+**`playbook.yml`**
+
+```yaml
 - name: Setup Flask App on EC2
   hosts: web
   become: yes
@@ -181,54 +170,53 @@ Edit
 
     - name: Run container
       command: docker run -d -p 81:5000 faeizanaba/flask-hello
-Run Ansible
-bash
-Copy
-Edit
-ansible-playbook -i inventory.ini playbook.yml
-🌐 Access the Application
-After deployment, open in your browser:
+```
 
-cpp
-Copy
-Edit
+---
+
+## 🌐 Access the Application
+
+After deployment, open:
+
+```
 http://<EC2_PUBLIC_IP>:81
-💻 Run Locally
-If you want to run the Flask app locally with Docker:
+```
 
-bash
-Copy
-Edit
+---
+
+## 🧪 Run Locally (Optional)
+
+```bash
 git clone https://github.com/FaeizHamdard22/flask-helloworld-Devops.git
 cd flask-helloworld-Devops
 
 docker build -t flask-hello .
 docker run -d -p 5000:5000 flask-hello
-Access it at:
-http://localhost:5000
+```
 
-📦 DockerHub Image
-View the Docker image here:
-🔗 https://hub.docker.com/r/faeizanaba/flask-hello
+Visit:
+[http://localhost:5000](http://localhost:5000)
 
-👤 Author
-Faeiz Hamdard
+---
 
-🔗 GitHub Profile
+## 📦 DockerHub Image
 
-🐳 DockerHub: faeizanaba
+Image is available at:
+[https://hub.docker.com/r/faeizanaba/flask-hello](https://hub.docker.com/r/faeizanaba/flask-hello)
 
-✅ Summary
-✅ Flask App (Python)
-✅ Versioned with GitHub
-✅ CI/CD with Jenkins
-✅ Dockerized and Pushed to DockerHub
-✅ Provisioned EC2 with Terraform
-✅ Configured with Ansible
-✅ Fully Automated Cloud Deployment
+---
 
-From code to cloud – a complete DevOps lifecycle! ☁️⚙️
+## 👤 Author
 
-yaml
-Copy
-Edit
+**Faeiz Hamdard**
+GitHub: [FaeizHamdard22](https://github.com/FaeizHamdard22)
+DockerHub: `faeizanaba`
+
+---
+
+```
+
+---
+
+اگر خواستی همینو به‌صورت فایل markdown (`README.md`) هم برات بسازم و بفرستم، فقط بگو.
+```
