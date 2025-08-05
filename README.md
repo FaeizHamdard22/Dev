@@ -1,6 +1,5 @@
 
-````md
-# Flask Hello World – Full DevOps Pipeline 🚀
+# Flask Hello World – Full DevOps Pipeline 
 
 This project demonstrates a complete DevOps pipeline using:
 
