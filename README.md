@@ -195,14 +195,14 @@ Visit:
 
 ---
 
-## 📦 DockerHub Image
+##  DockerHub Image
 
 Image is available at:
 [https://hub.docker.com/r/faeizanaba/flask-hello](https://hub.docker.com/r/faeizanaba/flask-hello)
 
 ---
 
-## 👤 Author
+##  Author
 
 **Faeiz Hamdard**
 GitHub: [FaeizHamdard22](https://github.com/FaeizHamdard22)
