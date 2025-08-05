@@ -1,6 +1,3 @@
-حتماً داداش. اینم فقط محتوای دقیق فایل `README.md` ـت، تمیز و حرفه‌ای، با رعایت جداسازی توضیحات و کدها به شکل درست:
-
----
 
 ````md
 # Flask Hello World – Full DevOps Pipeline 🚀
@@ -18,7 +15,7 @@ This project demonstrates a complete DevOps pipeline using:
 
 ---
 
-## 🐍 Flask Application
+##  Flask Application
 
 Simple Flask app to return a hello message.
 
@@ -43,7 +40,7 @@ flask
 
 ---
 
-## 🐳 Docker
+##  Docker
 
 Dockerfile to build the Flask app image.
 
@@ -64,7 +61,7 @@ CMD ["python", "app.py"]
 
 ---
 
-## ⚙️ Jenkins CI/CD Pipeline
+##  Jenkins CI/CD Pipeline
 
 Jenkins pulls the code, builds Docker image, and pushes it to DockerHub.
 
@@ -103,7 +100,7 @@ pipeline {
 
 ---
 
-## ☁️ Provision EC2 with Terraform
+##  Provision EC2 with Terraform
 
 Terraform provisions an Ubuntu EC2 instance.
 
@@ -130,7 +127,7 @@ resource "aws_instance" "web" {
 
 ---
 
-## 🛠️ Configure EC2 with Ansible
+##  Configure EC2 with Ansible
 
 Ansible installs Docker, pulls image, and runs the container.
 
@@ -174,7 +171,7 @@ Ansible installs Docker, pulls image, and runs the container.
 
 ---
 
-## 🌐 Access the Application
+##  Access the Application
 
 After deployment, open:
 
@@ -184,7 +181,7 @@ http://<EC2_PUBLIC_IP>:81
 
 ---
 
-## 🧪 Run Locally (Optional)
+##  Run Locally (Optional)
 
 ```bash
 git clone https://github.com/FaeizHamdard22/flask-helloworld-Devops.git
@@ -212,11 +209,3 @@ Image is available at:
 GitHub: [FaeizHamdard22](https://github.com/FaeizHamdard22)
 DockerHub: `faeizanaba`
 
----
-
-```
-
----
-
-اگر خواستی همینو به‌صورت فایل markdown (`README.md`) هم برات بسازم و بفرستم، فقط بگو.
-```
