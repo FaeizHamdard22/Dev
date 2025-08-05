@@ -1,4 +1,4 @@
-# Flask Hello World – Full DevOps Pipeline 
+# Flask Hello World – Full DevOps Pipeline 🚀
 
 This project demonstrates a complete DevOps pipeline using:
 
@@ -13,7 +13,7 @@ This project demonstrates a complete DevOps pipeline using:
 
 ---
 
-##  Objective
+## 📌 Objective
 
 Fully automate the process of:
 
@@ -26,7 +26,7 @@ Fully automate the process of:
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
 flask-helloworld-Devops/
 │
@@ -39,11 +39,13 @@ flask-helloworld-Devops/
 ├── main.tf # Terraform file to create EC2
 └── README.md # This file
 
-
+python
+Copy
+Edit
 
 ---
 
-##  1. Flask App
+## 🐍 1. Flask App
 
 **app.py**
 ```python
@@ -58,10 +60,14 @@ if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
 requirements.txt
 
+nginx
+Copy
+Edit
 flask
- 2. Dockerfile
+🐳 2. Dockerfile
 dockerfile
-
+Copy
+Edit
 FROM python:3.10-slim
 
 WORKDIR /app
@@ -72,10 +78,12 @@ RUN pip install -r requirements.txt
 COPY . .
 
 CMD ["python", "app.py"]
-⚙ 3. Jenkins CI/CD
+⚙️ 3. Jenkins CI/CD
 Jenkinsfile
 
-
+groovy
+Copy
+Edit
 pipeline {
     agent any
 
@@ -104,12 +112,14 @@ pipeline {
         }
     }
 }
- DockerHub credentials (dockerhub-pass) must be added in Jenkins > Manage Credentials
+💡 DockerHub credentials (dockerhub-pass) must be added in Jenkins > Manage Credentials
 
-4. Terraform – Provision EC2
+☁️ 4. Terraform – Provision EC2
 main.tf
 
-
+hcl
+Copy
+Edit
 provider "aws" {
   region     = "us-east-1"
   access_key = "<YOUR_ACCESS_KEY>"
@@ -127,18 +137,24 @@ resource "aws_instance" "web" {
   }
 }
 Run Terraform
-
+bash
+Copy
+Edit
 terraform init
 terraform apply
-⚙ 5. Ansible – Install & Deploy on EC2
+⚙️ 5. Ansible – Install & Deploy on EC2
 inventory.ini
 
-
+ini
+Copy
+Edit
 [web]
 <EC2_PUBLIC_IP> ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mykey.pem
 playbook.yml
 
-
+yaml
+Copy
+Edit
 - name: Setup Flask App on EC2
   hosts: web
   become: yes
@@ -166,17 +182,23 @@ playbook.yml
     - name: Run container
       command: docker run -d -p 81:5000 faeizanaba/flask-hello
 Run Ansible
-
+bash
+Copy
+Edit
 ansible-playbook -i inventory.ini playbook.yml
-Access the Application
+🌐 Access the Application
 After deployment, open in your browser:
 
-
+cpp
+Copy
+Edit
 http://<EC2_PUBLIC_IP>:81
- Run Locally
+💻 Run Locally
 If you want to run the Flask app locally with Docker:
 
-
+bash
+Copy
+Edit
 git clone https://github.com/FaeizHamdard22/flask-helloworld-Devops.git
 cd flask-helloworld-Devops
 
@@ -185,16 +207,16 @@ docker run -d -p 5000:5000 flask-hello
 Access it at:
 http://localhost:5000
 
- DockerHub Image
+📦 DockerHub Image
 View the Docker image here:
-https://hub.docker.com/r/faeizanaba/flask-hello
+🔗 https://hub.docker.com/r/faeizanaba/flask-hello
 
 👤 Author
 Faeiz Hamdard
 
- GitHub Profile
+🔗 GitHub Profile
 
- DockerHub: faeizanaba
+🐳 DockerHub: faeizanaba
 
 ✅ Summary
 ✅ Flask App (Python)
@@ -205,5 +227,8 @@ Faeiz Hamdard
 ✅ Configured with Ansible
 ✅ Fully Automated Cloud Deployment
 
-From code to cloud – a complete DevOps lifecycle! ☁
+From code to cloud – a complete DevOps lifecycle! ☁️⚙️
 
+yaml
+Copy
+Edit
