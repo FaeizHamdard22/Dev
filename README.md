@@ -1,91 +1,144 @@
-# Flask Hello World - DevOps Pipeline Project
+# Flask Hello World – Full DevOps Pipeline 
 
-This project showcases a complete CI/CD pipeline using a simple Python Flask app. The code is built, containerized, pushed to DockerHub, and automatically deployed to an AWS EC2 server using **Jenkins**, **Terraform**, and **Ansible**.
+This project demonstrates a complete DevOps pipeline using:
 
----
-
-## Technologies Used
-
-- **Flask** – Python micro web framework
-- **GitHub** – Source code version control
-- **Docker** – Containerization
-- **DockerHub** – Container image registry
-- **Jenkins** – Continuous Integration & Continuous Deployment
-- **Terraform** – Infrastructure as Code (IaC)
-- **Ansible** – Configuration management & deployment
-- **AWS EC2** – Cloud server to host the app
+- **Flask** (Python web app)
+- **GitHub** (Code version control)
+- **Docker** (Containerization)
+- **Jenkins** (CI/CD automation)
+- **DockerHub** (Image repository)
+- **Terraform** (Infrastructure as Code)
+- **Ansible** (Configuration management)
+- **AWS EC2** (Cloud hosting)
 
 ---
 
-##  Project Workflow - Step by Step
+##  Objective
 
-### 1. Flask App and Project Files
+Fully automate the process of:
 
-The app contains:
-- `app.py` – Flask application
-- `requirements.txt` – Python dependencies (like Flask)
-- `Dockerfile` – Instructions to build the Docker image
-- `Jenkinsfile` – Jenkins pipeline automation script
-
-All files are pushed to GitHub.
-
----
-
-### 2. Jenkins Setup (CI/CD)
-
-In Jenkins:
-- Created a new **pipeline job**.
-- Connected it to the GitHub repository.
-- Created **DockerHub credentials** inside Jenkins (`username/password`) using "Manage Credentials".
-- Pipeline uses the `Jenkinsfile` which:
-  1. Pulls the latest code from GitHub.
-  2. Builds the Docker image using `Dockerfile`.
-  3. Logs in to DockerHub using the credentials.
-  4. Pushes the image to DockerHub:  
-      [`faeizanaba/flask-hello`](https://hub.docker.com/repository/docker/faeizanaba/flask-hello)
+1. Writing code for a simple Flask app
+2. Pushing it to GitHub
+3. Jenkins automatically builds the Docker image
+4. Pushes it to DockerHub
+5. Terraform provisions an EC2 instance
+6. Ansible installs dependencies and runs the app in Docker
 
 ---
 
-### 3. Terraform – Provision EC2 Instance
+##  Project Structure
 
-- A Terraform script provisions an EC2 instance (Ubuntu) on AWS.
-- Example configuration includes:
-  - AMI ID
-  - Instance type
-  - Key pair
-  - Security group (opened port 81)
+flask-helloworld-Devops/
+│
+├── app.py # Flask application
+├── requirements.txt # Python dependencies
+├── Dockerfile # Instructions to build Docker image
+├── Jenkinsfile # Jenkins pipeline
+├── inventory.ini # Ansible inventory (EC2 IP)
+├── playbook.yml # Ansible tasks
+├── main.tf # Terraform file to create EC2
+└── README.md # This file
 
-After applying the Terraform code:
-```bash
+
+
+---
+
+##  1. Flask App
+
+**app.py**
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Hello from Flask app in Docker container!"
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
+requirements.txt
+
+flask
+ 2. Dockerfile
+dockerfile
+
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]
+⚙ 3. Jenkins CI/CD
+Jenkinsfile
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone') {
+            steps {
+                git 'https://github.com/FaeizHamdard22/flask-helloworld-Devops.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t faeizanaba/flask-hello .'
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_HUB_PASS')]) {
+                    sh '''
+                        echo $DOCKER_HUB_PASS | docker login -u faeizhamdard975@gmail.com --password-stdin
+                        docker push faeizanaba/flask-hello
+                    '''
+                }
+            }
+        }
+    }
+}
+ DockerHub credentials (dockerhub-pass) must be added in Jenkins > Manage Credentials
+
+4. Terraform – Provision EC2
+main.tf
+
+
+provider "aws" {
+  region     = "us-east-1"
+  access_key = "<YOUR_ACCESS_KEY>"
+  secret_key = "<YOUR_SECRET_KEY>"
+}
+
+resource "aws_instance" "web" {
+  ami                    = "ami-0c7217cdde317cfec"  # Ubuntu 22.04
+  instance_type          = "t2.micro"
+  key_name               = "mykey"
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "FlaskAppServer"
+  }
+}
+Run Terraform
+
 terraform init
 terraform apply
-→ EC2 instance is created and public IP is assigned.
-
-4. Ansible – Install & Deploy on EC2
-After EC2 is ready, used Ansible to configure the instance:
-
+⚙ 5. Ansible – Install & Deploy on EC2
 inventory.ini
-Specifies the public IP of EC2:
 
-ini
-Copy
-Edit
+
 [web]
 <EC2_PUBLIC_IP> ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mykey.pem
-playbook.yml tasks:
-Update apt packages
+playbook.yml
 
-Install docker.io and python3
 
-Start and enable Docker service
-
-Pull the Docker image from DockerHub
-
-Run the container on port 81
-
-yaml
-Copy
-Edit
 - name: Setup Flask App on EC2
   hosts: web
   become: yes
@@ -94,6 +147,11 @@ Edit
       apt:
         name: docker.io
         update_cache: yes
+        state: present
+
+    - name: Install Python
+      apt:
+        name: python3
         state: present
 
     - name: Start Docker
@@ -107,40 +165,45 @@ Edit
 
     - name: Run container
       command: docker run -d -p 81:5000 faeizanaba/flask-hello
- Final Result
-App is now running inside Docker on AWS EC2.
+Run Ansible
 
-Accessible via:
+ansible-playbook -i inventory.ini playbook.yml
+Access the Application
+After deployment, open in your browser:
+
+
 http://<EC2_PUBLIC_IP>:81
-
  Run Locally
-If you want to test the app locally:
+If you want to run the Flask app locally with Docker:
 
-bash
-Copy
-Edit
+
 git clone https://github.com/FaeizHamdard22/flask-helloworld-Devops.git
 cd flask-helloworld-Devops
 
 docker build -t flask-hello .
 docker run -d -p 5000:5000 flask-hello
-→ Open: http://localhost:5000
+Access it at:
+http://localhost:5000
 
  DockerHub Image
-faeizanaba/flask-hello
+View the Docker image here:
+https://hub.docker.com/r/faeizanaba/flask-hello
 
- Author
+👤 Author
 Faeiz Hamdard
 
-GitHub
+ GitHub Profile
 
-DockerHub
+ DockerHub: faeizanaba
 
- Summary
- Flask App →
- Pushed to GitHub →
- Built and pushed via Jenkins →
- Deployed on EC2 via Terraform & Ansible →
- App running in Docker on the cloud!
+✅ Summary
+✅ Flask App (Python)
+✅ Versioned with GitHub
+✅ CI/CD with Jenkins
+✅ Dockerized and Pushed to DockerHub
+✅ Provisioned EC2 with Terraform
+✅ Configured with Ansible
+✅ Fully Automated Cloud Deployment
 
-This project demonstrates a real-world DevOps pipeline from code to cloud, fully automated.
+From code to cloud – a complete DevOps lifecycle! ☁
+
